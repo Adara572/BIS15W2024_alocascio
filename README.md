@@ -5,4 +5,4 @@ Welcome to my BIS 015L repository.
 I am a 2nd year biochemistry major at UC Davis.  
 I have a cat.
 ## Contact Information
-[Adara LoCascio](amlocascio@ucdavis.edu)
+(amlocascio@ucdavis.edu)
