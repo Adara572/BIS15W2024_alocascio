@@ -1,0 +1,50 @@
+---
+title: "penguin_warmup"
+output: html_document
+date: "2024-01-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1. Load libraries
+```{r}
+library(tidyverse)
+```
+```{r}
+library(palmerpenguins)
+```
+
+### what are the domensions of 'penguines'
+```{r}
+dim(penguins)
+```
+
+### what are the names of the variables
+```{r}
+names(penguins)
+```
+
+### 4. how many indivduals are on each island?
+```{r}
+penguins <- penguins
+penguins
+```
+
+```{r}
+table(penguins$island)
+```
+
+```{r}
+penguins$island
+```
+
+```{r}
+summary(penguins$island)
+```
+
+```{r}
+mean(penguins$body_mass_g, na.rm=T)
+```
+
