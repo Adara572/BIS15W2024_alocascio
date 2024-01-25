@@ -1,0 +1,42 @@
+---
+title: "warmup5"
+output: html_document
+date: "2024-01-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+getwd()
+```
+```{r}
+fish <- read_csv("data/Gaeta_etal_CLC_data.csv")
+```
+### Tranform to only include lakeid and lentgh
+
+```{r}
+names(fish)
+```
+```{r}
+fishhlength <- select(fish, "lakeid", "length")
+```
+
+
+### filter fish for lake BO
+
+```{r}
+filter(fish, lakeid=="BO")
+```
+
+### clac mean length of BO fish
+
+```{r}
+fish_bo <- filter(fish, lakeid=="BO")
+```
+
+```{r}
+mean(fish_bo$length)
+```
+
