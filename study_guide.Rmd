@@ -1,0 +1,247 @@
+---
+title: "study_guide"
+output: html_document
+date: "2024-02-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### what is in each notes 
+
+## lab 4 is Dplyr
+### using slecet to pull out specific variable 
+```{r}
+select(fish, "lakeid", "scalelength")
+```
+
+To add a range of columns use `start_col:end_col`.
+```{r}
+select(fish, fish_id:length)
+```
+
+The - operator is useful in select. It allows us to select everything except the specified variables.
+```{r}
+select(fish, -"fish_id", -"annnumber", -"length", -"radii_length_mm")
+
+For very large data frames with lots of variables, `select()` utilizes lots of different operators to make things easier. Let's say we are only interested in the variables that deal with length.
+
+```{r}
+names(fish)
+```
+
+```{r}
+select(fish, contains("length"))
+```
+
+When columns are sequentially named, `starts_with()` makes selecting columns easier.
+```{r}
+select(fish, starts_with("radii"))
+```
+
+Options to select columns based on a specific criteria include:  
+1. ends_with() = Select columns that end with a character string  
+2. contains() = Select columns that contain a character string  
+3. matches() = Select columns that match a regular expression  
+4. one_of() = Select columns names that are from a group of names  
+
+```{r}
+names(fish)
+```
+
+```{r}
+select(fish, ends_with("id"))
+```
+
+```{r}
+select(fish, contains("fish"))
+
+To select all columns that are *not* a class of data, you need to add a `~`.
+```{r}
+select_if(fish, ~!is.numeric(.)) #the ! means not
+### Ways to use select
+
+
+### ways to use filter 
+## `filter()`
+Unlike `select()`, `filter()` allows us to extract data that meet specific criteria within a variable. Let's say that we are interested only in the fish that occur in lake "AL". We can use `filter()` to extract these observations.  
+```{r}
+filter(fish, lakeid == "AL")
+```
+
+Similarly, if we are only interested in fish with a length greater than or equal to 350 we can use `filter()` to extract these observations.  
+```{r}
+filter(fish, length >= 350)
+```
+
++ `filter()` allows all of the expected operators; i.e. >, >=, <, <=, != (not equal), and == (equal).  
+
+Using the `!` operator allows for the exclusion of specific observations.
+```{r}
+not_AL <- filter(fish, lakeid != "AL") #! means not
+```
+
+## Using `filter()` with multiple observations  
+Filtering multiple values within the same variable requires the `%in%` [operator](https://www.tutorialspoint.com/r/r_operators.htm).    
+```{r}
+filter(fish, length %in% c(167, 175))
+```
+
+Alternatively, you can use `between` if you are looking for a range of specific values.  
+```{r}
+filter(fish, between(scalelength, 2.5, 2.55))
+```
+
+You can also extract observations "near" a certain value but you need to specify a tolerance.  
+```{r}
+filter(fish, near(radii_length_mm, 2, tol = 0.2))
+```
+
+## Using `filter()` on multiple conditions
+You can also use `filter()` to extract data based on multiple conditions. Below we extract only the fish that have lakeid "AL" and length >350.
+```{r}
+filter(fish, lakeid == "AL" & length > 350)
+```
+
+Notice that the `|` operator generates a different result.
+```{r}
+filter(fish, lakeid == "AL" | length > 350)
+```
+
+Rules:  
++ `filter(condition1, condition2)` will return rows where both conditions are met.  
++ `filter(condition1, !condition2)` will return all rows where condition one is true but condition 2 is not.  
++ `filter(condition1 | condition2)` will return rows where condition 1 or condition 2 is met.  
++ `filter(xor(condition1, condition2)` will return all rows where only one of the conditions is met, and not when both conditions are met.  
+
+In this case, we filter out the fish with a length over 400 and a scale length over 11 or a radii length over 8.
+```{r}
+filter(fish, length > 400, (scalelength > 11 | radii_length_mm > 8))
+```
+
+In this case, we filter out the fish with a length over 400 and a scale length over 11 or a radii length over 8.
+```{r}
+filter(fish, length > 400, (scalelength > 11 | radii_length_mm > 8))
+### How to change the the class of a
+variable 
+
+
+```{r}
+elephants$sex <- as.factor(elephants$sex)
+```
+
+### How to clean names
+```{r}
+elephants <- clean_names(elephants)
+```
+### How to load data
+```{r}
+read.csv("data/whatever.csv")
+```
+
+### how to pick out specific numbers from data 
+#ex:how many males and females 
+```{r}
+elephants %>% 
+  count(sex)
+```
+
+### How to take averages 
+#ex:What is the average age all elephants in the data?
+```{r}
+elephants %>% 
+  summarize(mean_age=mean(age))
+```
+## Adding Rows
+We can add a new bird's data with the `rbind()` function, known as row bind. It will bind our new vector to our data frame row-wise.
+```{r}
+new_bird <- c("female", 3.6, 3.9)
+new_bird
+```
+
+```{r}
+hbirds<- rbind(hbirds, new_bird)
+hbirds
+```
+
+## Adding Columns
+What if we come across more data and we want to add it to our data frame? We can also do that with the `$` operator.
+```{r}
+hbirds$neighborhood <- c("lakewood", "brentwood", "lakewood", "scenic Heights")
+hbirds
+```
+
+## Summary functions
+Once data have been uploaded, you may want to get an idea of its structure, contents, and dimensions. I routinely run one or more of these commands when data are first imported.  
+
+We can summarize our data frame with the`summary()` function.  
+```{r}
+summary(fish)
+```
+
+`glimpse()` is another useful summary function.
+```{r}
+glimpse(fish)
+```
+
+`nrow()` gives the numbers of rows.
+```{r}
+nrow(fish)
+```
+
+`ncol` gives the number of columns.
+```{r}
+ncol(fish)
+```
+
+`dim()` gives the dimensions.
+```{r}
+dim(fish)
+```
+
+`names` gives the column names.
+```{r}
+names(fish)
+```
+
+`head()` prints the first n rows of the data frame.
+```{r}
+head(fish)
+```
+
+`tail()` prinst the last n rows of the data frame.
+```{r}
+tail(fish)
+```
+
+`table()` is useful when you have a limited number of categorical variables. It produces fast counts of the number of observations in a variable. We will come back to this later... 
+```{r}
+table(fish$lakeid)
+```
+
+We can also click on the `fish` data frame in the Environment tab or type View(fish).
+```{r}
+View(fish)
+```
+
+## Filter
+Filter is a way of pulling out observations that meet specific criteria in a variable. We will work a lot more with this in the next lab.  
+```{r}
+little_fish <- filter(fish, length<=100)
+little_fish
+```
+
+## Practice
+1. How many genera are represented in the msleep data frame?
+```{r}
+msleep %>% 
+  summarize(n_genera=n_distinct(genus))
+```
+
+Here is another option.
+```{r}
+msleep %>% 
+  tabyl(genus)
+```
