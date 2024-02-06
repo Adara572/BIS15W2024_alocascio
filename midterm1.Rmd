@@ -1,0 +1,160 @@
+---
+title: "Midterm 1 W24"
+author: "Adara Locascio"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your code must be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run. Be sure to add your name to the author header above. 
+
+Your code must knit in order to be considered. If you are stuck and cannot answer a question, then comment out your code and knit the document. You may use your notes, labs, and homework to help you complete this exam. Do not use any other resources- including AI assistance.  
+
+Don't forget to answer any questions that are asked in the prompt!  
+
+Be sure to push your completed midterm to your repository. This exam is worth 30 points.  
+
+## Background
+In the data folder, you will find data related to a study on wolf mortality collected by the National Park Service. You should start by reading the `README_NPSwolfdata.pdf` file. This will provide an abstract of the study and an explanation of variables.  
+
+The data are from: Cassidy, Kira et al. (2022). Gray wolf packs and human-caused wolf mortality. [Dryad](https://doi.org/10.5061/dryad.mkkwh713f). 
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+```
+
+## Load the wolves data
+In these data, the authors used `NULL` to represent missing values. I am correcting this for you below and using `janitor` to clean the column names.
+```{r message=FALSE, warning=FALSE}
+wolves <- read.csv("data/NPS_wolfmortalitydata.csv", na = c("NULL")) %>% clean_names()
+```
+
+## Questions
+Problem 1. (1 point) Let's start with some data exploration. What are the variable (column) names?  
+
+```{r}
+names(wolves)
+```
+
+
+Problem 2. (1 point) Use the function of your choice to summarize the data and get an idea of its structure.  
+
+```{r}
+glimpse(wolves)
+```
+
+
+Problem 3. (3 points) Which parks/ reserves are represented in the data? Don't just use the abstract, pull this information from the data.  
+## parks include "YUCH", 
+```{r}
+wolves %>% 
+  select("park")# I know to isolate "park" but I forgot how to individually isolate the names of the parks
+```
+
+Problem 4. (4 points) Which park has the largest number of wolf packs?
+##  largest number of wolf packs is YNP
+
+```{r}
+wolves %>% 
+  group_by(park) %>% 
+   summarize(total_wolf_pack=sum(packsize_aug, na.rm=T)) %>% 
+  arrange(desc(total_wolf_pack))
+```
+
+
+Problem 5. (4 points) Which park has the highest total number of human-caused mortalities `mort_all`?
+## Highest number of himan-caused mortalities in YUCH 
+```{r}
+wolves %>% 
+  group_by(park) %>% 
+  summarise(total_mort_all=sum(mort_all, na.rm=T)) %>% 
+  arrange(desc(total_mort_all))
+```
+
+The wolves in [Yellowstone National Park](https://www.nps.gov/yell/learn/nature/wolf-restoration.htm) are an incredible conservation success story. Let's focus our attention on this park.  
+
+Problem 6. (2 points) Create a new object "ynp" that only includes the data from Yellowstone National Park.  
+```{r}
+ynp <- wolves %>% 
+  filter(park=="YNP")
+ynp
+```
+
+Problem 7. (3 points) Among the Yellowstone wolf packs, the [Druid Peak Pack](https://www.pbs.org/wnet/nature/in-the-valley-of-the-wolves-the-druid-wolf-pack-story/209/) is one of most famous. What was the average pack size of this pack for the years represented in the data?
+## avg pack size is 13.93333
+
+```{r}
+ynp %>% 
+  select(park, biolyr, pack, packsize_aug) %>% 
+  filter(pack=="druid") %>% 
+  group_by(pack) %>% 
+  summarise(packsize_mean=mean(packsize_aug, na.rm=T),
+            n=n())
+```
+
+
+Problem 8. (4 points) Pack dynamics can be hard to predict- even for strong packs like the Druid Peak pack. At which year did the Druid Peak pack have the largest pack size? What do you think happened in 2010?
+## largest pack size in 2001 and in 2010 it was 0
+
+```{r}
+ynp %>% 
+  filter(pack=="druid") %>% 
+  group_by(pack) %>% 
+  summarise(max_packsize=max(packsize_aug, na.rm = T),
+            n=n())
+```
+
+```{r}
+ynp %>% 
+  select(park, biolyr, pack, packsize_aug) %>% 
+  filter(pack=="druid") %>% 
+  filter(packsize_aug==37)
+```
+
+```{r}
+ynp %>% 
+  select(park, biolyr, pack, packsize_aug) %>% 
+  filter(pack=="druid") %>% 
+  filter(biolyr==2010)
+```
+
+```{r}
+ynp %>% 
+  filter(biolyr==2001)
+```
+
+```{r}
+ynp %>% #checking my work
+  filter(biolyr==2010)
+```
+## From 2001 to 2010 the pack size decreased from 37 to 0. I think this happened because of competion.Examing the data from  2010 I noticed the packs "blacktails and "mollies" have the largest numbers. So I compared my findings to 2001 and found that those packs have both increase since then. So I think that it is possible the certain groups like the "blacktails" and "mollies" were able to out compete the "druid" pack since.
+
+Problem 9. (5 points) Among the YNP wolf packs, which one has had the highest overall persistence `persisty1` for the years represented in the data? Look this pack up online and tell me what is unique about its behavior- specifically, what prey animals does this pack specialize on?  
+
+## mollies have the highest persitance levels 
+```{r}
+ynp %>% 
+  group_by(pack) %>% 
+  summarise(total_persisty1=sum(persisty1, na.rm=T)) %>% 
+  arrange(desc(total_persisty1))
+```
+## What is uniquie about the "mollies" pack is that have adapted specilized hunting technques inorder to hunt bison.
+
+Problem 10. (3 points) Perform one analysis or exploration of your choice on the `wolves` data. Your answer needs to include at least two lines of code and not be a summary function.  
+## I wanna look into the average, minimun, and maximmun packs size of the mollies since in the article I read it said that the mollies were pushed out of their terrioty by the Druids and i wanted to see how that impacted the pack size.
+
+
+```{r}
+ynp %>% 
+  filter(pack=="mollies") %>% 
+  group_by(pack) %>% 
+  summarise(mean_packsize=mean(packsize_aug, na.rm=T),
+            min_packsize=min(packsize_aug, na.rm=T),
+            max_packsize=max(packsize_aug, na.rm = T),
+            n=n())
+```
+
