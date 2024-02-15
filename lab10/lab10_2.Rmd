@@ -53,7 +53,29 @@ penguins %>%
 ## Practice
 1. What if we wanted a plot that showed the number of measured penguins for each species?
 
+```{r}
+penguins %>% 
+  count(species) %>% 
+  ggplot(aes(x=species, y=n))+
+  geom_col()
+```
+```{r}
+
+```
+
 2. How about average bill length by sex?
+```{r}
+names(penguins)
+```
+
+```{r}
+penguins %>% 
+  filter(sex!="NA") %>% #pulls NAs out
+  group_by(sex) %>% 
+  summarise(av_bill_length=mean(bill_length_mm)) %>% 
+  ggplot(aes(x=sex, y=av_bill_length))+
+  geom_col()
+```
 
 ## Box Plots
 For the next series of examples, we will use the `homerange` data.  **Database of vertebrate home range sizes.**   
@@ -62,7 +84,7 @@ Reference: Tamburello N, Cote IM, Dulvy NK (2015) Energy and the scaling of anim
 Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1  
 
 ```{r message=FALSE, warning=FALSE}
-homerange <- read_csv("data/Tamburelloetal_HomeRangeDatabase.csv")
+homerange <- read_csv("../data/Tamburelloetal_HomeRangeDatabase.csv")
 ```
 
 Boxplots help us visualize a range of values. So, on the x-axis we typically have something categorical and the y-axis is the range. In the case below, we are plotting `log10.mass` by taxonomic class in the `homerange` data. `geom_boxplot()` is the geom type for a standard box plot. The center line in each box represents the median, not the mean.
@@ -85,9 +107,46 @@ homerange %>%
 ## Practice
 1. There are more herbivores than carnivores in the homerange data, but how do their masses compare? Make a summary and boxplot that compares their masses. Use `log10.mass`.
 
+```{r}
+names(homerange)
+```
+
+```{r}
+homerange %>% 
+  group_by(trophic.guild) %>% 
+  summarise(mean_log10_mass=mean(log10.mass))
+  
+```
+```{r}
+homerange %>% 
+  group_by(trophic.guild) %>% 
+  summarise(mean_log10_mass=mean(log10.mass)) %>% 
+  ggplot(aes(x=trophic.guild, y=mean_log10_mass))+
+  geom_col()
+```
+```{r}
+homerange %>% 
+  ggplot(aes(x=trophic.guild, y=log10.mass))+
+  geom_boxplot()
+```
+
+
 2. Have a closer look at carnivorous mammals. Summarize the range of log10.mass by family.
+```{r}
+homerange %>% 
+  filter(class=="mammalia"& trophic.guild== "carnivore") %>% 
+  select(family, trophic.guild, log10.mass) %>% 
+  ggplot(aes(x=family, y=log10.mass))+
+  geom_boxplot()+
+  coord_flip()
+  
+```
 
 3. Now use a boxplot to visualize the range of log10.mass by family of mammalian carnivore.
+```{r}
+homerange %>% 
+  ggplot(aes(x=trophic.guild, y= log10.mass))+
+```
 
 ## Wrap-up  
 Please review the learning goals and be sure to use the code here as a reference when completing the homework.  

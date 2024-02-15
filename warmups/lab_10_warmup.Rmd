@@ -17,10 +17,13 @@ library(janitor)
 getwd()
 ```
 
+```{r}
+getwd()
+```
 
 Simulated malaria data
 ```{r}
-malaria <- read_csv("data/malaria.csv") %>% clean_names()
+malaria <- read_csv("../data/malaria.csv") %>% clean_names()
 ```
 
 ```{r}
