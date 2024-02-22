@@ -9,11 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Adara" />
+<meta name="author" content="Adara Locascio" />
 
-<meta name="date" content="2024-02-12" />
+<meta name="date" content="2024-01-17" />
 
-<title>Homework 7</title>
+<title>Lab 2 Homework</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -374,9 +374,9 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Homework 7</h1>
-<h4 class="author">Adara</h4>
-<h4 class="date">2024-02-12</h4>
+<h1 class="title toc-ignore">Lab 2 Homework</h1>
+<h4 class="author">Adara Locascio</h4>
+<h4 class="date">2024-01-17</h4>
 
 </div>
 
@@ -391,83 +391,131 @@ the included code chunks to run. Be sure to add your name to the author
 header above.</p>
 <p>Make sure to use the formatting conventions of RMarkdown to make your
 report neat and clean!</p>
-</div>
-<div id="load-the-libraries" class="section level2">
-<h2>Load the libraries</h2>
-<pre class="r"><code>library(tidyverse)
-library(janitor)
-library(skimr)
-library(naniar)</code></pre>
-</div>
-<div id="data" class="section level2">
-<h2>Data</h2>
-<p><strong>1. For this homework, we will use two different data sets.
-Please load <code>amniota</code> and <code>amphibio</code>.</strong></p>
-<p><code>amniota</code> data:<br />
-Myhrvold N, Baldridge E, Chan B, Sivam D, Freeman DL, Ernest SKM (2015).
-“An amniote life-history database to perform comparative analyses with
-birds, mammals, and reptiles.” <em>Ecology</em>, <em>96</em>, 3109. doi:
-10.1890/15-0846.1 (URL: <a href="https://doi.org/10.1890/15-0846.1" class="uri">https://doi.org/10.1890/15-0846.1</a>).</p>
-<pre class="r"><code>#amniota&lt;-read_csv(&quot;data/amniota.csv&quot;) %&gt;% clean_names()</code></pre>
-<p><code>amphibio</code> data:<br />
-Oliveira BF, São-Pedro VA, Santos-Barrera G, Penone C, Costa GC (2017).
-“AmphiBIO, a global database for amphibian ecological traits.”
-<em>Scientific Data</em>, <em>4</em>, 170123. doi:
-10.1038/sdata.2017.123 (URL: <a href="https://doi.org/10.1038/sdata.2017.123" class="uri">https://doi.org/10.1038/sdata.2017.123</a>).</p>
-<pre class="r"><code>#amphibio &lt;- read_csv(&quot;data/amphibio.csv&quot;) %&gt;% clean_names() #its saying it can&#39;t open the connection</code></pre>
-</div>
-<div id="questions" class="section level2">
-<h2>Questions</h2>
-<p><strong>2. Do some exploratory analysis of the <code>amniota</code>
-data set. Use the function(s) of your choice. Try to get an idea of how
-NA’s are represented in the data.</strong></p>
-<pre class="r"><code>#glimpse(amniota)</code></pre>
-<p><strong>3. Do some exploratory analysis of the <code>amphibio</code>
-data set. Use the function(s) of your choice. Try to get an idea of how
-NA’s are represented in the data.</strong></p>
-<pre class="r"><code>#glimpse(amphibio)</code></pre>
-<p><strong>4. How many total NA’s are in each data set? Do these values
-make sense? Are NA’s represented by values?</strong></p>
-<pre class="r"><code>#amniota %&gt;% 
-  #map_df(~ sum(is.na(.)))</code></pre>
-<pre class="r"><code>#amphibio %&gt;% 
-  #map_df(~ sum(is.na(.)))</code></pre>
-<p><strong>5. Make any necessary replacements in the data such that all
-NA’s appear as “NA”.</strong></p>
-<pre class="r"><code>#amniota %&gt;% 
-  #replace_with_na_all(condition = ~.x== -999)</code></pre>
-<pre class="r"><code>#amphibio %&gt;% 
-  #replace_with_na_all(condition = ~.x== -999)</code></pre>
-<p><strong>6. Use the package <code>naniar</code> to produce a summary,
-including percentages, of missing data in each column for the
-<code>amniota</code> data.</strong></p>
-<pre class="r"><code>#miss_var_summary(amniota)</code></pre>
-<p><strong>7. Use the package <code>naniar</code> to produce a summary,
-including percentages, of missing data in each column for the
-<code>amphibio</code> data.</strong></p>
-<pre class="r"><code>#miss_var_summary(amphibio)</code></pre>
-<p><strong>8. For the <code>amniota</code> data, calculate the number of
-NAs in the <code>egg_mass_g</code> column sorted by taxonomic class;
-i.e. how many NA’s are present in the <code>egg_mass_g</code> column in
-birds, mammals, and reptiles? Does this results make sense biologically?
-How do these results affect your interpretation of NA’s?</strong></p>
-<pre class="r"><code>#amniota %&gt;% 
-  #group_by(class) %&gt;% 
-  #select(class, egg_mass_g) %&gt;% 
-  #miss_var_summary(order=T)</code></pre>
-<p><strong>9. The <code>amphibio</code> data have variables that
-classify species as fossorial (burrowing), terrestrial, aquatic, or
-arboreal.Calculate the number of NA’s in each of these variables. Do you
-think that the authors intend us to think that there are NA’s in these
-columns or could they represent something else? Explain.</strong></p>
-<pre class="r"><code>#amphibio %&gt;% 
-  #select(Arb, Fos, Aqu, Ter) %&gt;% 
-  #miss_var_summary(order=T)</code></pre>
-<p><strong>10. Now that we know how NA’s are represented in the
-<code>amniota</code> data, how would you load the data such that the
-values which represent NA’s are automatically converted?</strong></p>
-<pre class="r"><code>#read.csv(&quot;data/amniota.csv&quot;, na= c(&quot;NA&quot;, &quot;-999&quot;, &quot;-999.00&quot;)) %&gt;% clean_names() # Its saying it can&#39;t open the connection
-#i put hash tags in front of everything because it refused to knit because it didn&#39;t recognize the data as an object. I&#39;m thinking its because I had to import the data and not load it. </code></pre>
+<ol style="list-style-type: decimal">
+<li><p>What is a vector in R?<br />
+A vector in R is a way to organize data. This icludes
+characters.</p></li>
+<li><p>What is a data matrix in R? A data matrix in R is a many
+organized collected vectors.</p></li>
+<li><p>Below are data collected by three scientists (Jill, Steve, Susan
+in order) measuring temperatures of eight hot springs. Run this code
+chunk to create the vectors.</p></li>
+</ol>
+<pre class="r"><code>spring_1 &lt;- c(36.25, 35.40, 35.30)
+spring_2 &lt;- c(35.15, 35.35, 33.35)
+spring_3 &lt;- c(30.70, 29.65, 29.20)
+spring_4 &lt;- c(39.70, 40.05, 38.65)
+spring_5 &lt;- c(31.85, 31.40, 29.30)
+spring_6 &lt;- c(30.20, 30.65, 29.75)
+spring_7 &lt;- c(32.90, 32.50, 32.80)
+spring_8 &lt;- c(36.80, 36.45, 33.15)</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Build a data matrix that has the springs as rows and the columns as
+scientists.</li>
+</ol>
+<pre class="r"><code>hot_spring &lt;- c(spring_1, spring_2, spring_3, spring_4, spring_5, spring_6, spring_7, spring_8)
+hot_spring</code></pre>
+<pre><code>##  [1] 36.25 35.40 35.30 35.15 35.35 33.35 30.70 29.65 29.20 39.70 40.05 38.65
+## [13] 31.85 31.40 29.30 30.20 30.65 29.75 32.90 32.50 32.80 36.80 36.45 33.15</code></pre>
+<pre class="r"><code>hot_spring &lt;- matrix(hot_spring, nrow=8, byrow = T)
+hot_spring</code></pre>
+<pre><code>##       [,1]  [,2]  [,3]
+## [1,] 36.25 35.40 35.30
+## [2,] 35.15 35.35 33.35
+## [3,] 30.70 29.65 29.20
+## [4,] 39.70 40.05 38.65
+## [5,] 31.85 31.40 29.30
+## [6,] 30.20 30.65 29.75
+## [7,] 32.90 32.50 32.80
+## [8,] 36.80 36.45 33.15</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>The names of the springs are 1.Bluebell Spring, 2.Opal Spring,
+3.Riverside Spring, 4.Too Hot Spring, 5.Mystery Spring, 6.Emerald
+Spring, 7.Black Spring, 8.Pearl Spring. Name the rows and columns in the
+data matrix. Start by making two new vectors with the names, then use
+<code>colnames()</code> and <code>rownames()</code> to name the columns
+and rows.</li>
+</ol>
+<pre class="r"><code>scientists &lt;- c(&quot;Jill&quot;, &quot;Steve&quot;, &quot;Susan&quot;)
+scientists</code></pre>
+<pre><code>## [1] &quot;Jill&quot;  &quot;Steve&quot; &quot;Susan&quot;</code></pre>
+<pre class="r"><code>titles &lt;- c(&quot;Bluebell_Spring&quot;, &quot;Opal_Spring&quot;, &quot;Riverside_Spring&quot;, &quot;Too_Hot_Spring&quot;, &quot;Mystery_Spring&quot;, &quot;Emerald_Spring&quot;, &quot;Black_Spring&quot;, &quot;Pearl Spring&quot;)
+titles</code></pre>
+<pre><code>## [1] &quot;Bluebell_Spring&quot;  &quot;Opal_Spring&quot;      &quot;Riverside_Spring&quot; &quot;Too_Hot_Spring&quot;  
+## [5] &quot;Mystery_Spring&quot;   &quot;Emerald_Spring&quot;   &quot;Black_Spring&quot;     &quot;Pearl Spring&quot;</code></pre>
+<pre class="r"><code>colnames(hot_spring) &lt;- scientists
+hot_spring</code></pre>
+<pre><code>##       Jill Steve Susan
+## [1,] 36.25 35.40 35.30
+## [2,] 35.15 35.35 33.35
+## [3,] 30.70 29.65 29.20
+## [4,] 39.70 40.05 38.65
+## [5,] 31.85 31.40 29.30
+## [6,] 30.20 30.65 29.75
+## [7,] 32.90 32.50 32.80
+## [8,] 36.80 36.45 33.15</code></pre>
+<pre class="r"><code>rownames(hot_spring) &lt;- titles
+hot_spring</code></pre>
+<pre><code>##                   Jill Steve Susan
+## Bluebell_Spring  36.25 35.40 35.30
+## Opal_Spring      35.15 35.35 33.35
+## Riverside_Spring 30.70 29.65 29.20
+## Too_Hot_Spring   39.70 40.05 38.65
+## Mystery_Spring   31.85 31.40 29.30
+## Emerald_Spring   30.20 30.65 29.75
+## Black_Spring     32.90 32.50 32.80
+## Pearl Spring     36.80 36.45 33.15</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Calculate the mean temperature of all eight springs.</li>
+</ol>
+<pre class="r"><code>temperature_mean &lt;- rowMeans(hot_spring)
+temperature_mean</code></pre>
+<pre><code>##  Bluebell_Spring      Opal_Spring Riverside_Spring   Too_Hot_Spring 
+##         35.65000         34.61667         29.85000         39.46667 
+##   Mystery_Spring   Emerald_Spring     Black_Spring     Pearl Spring 
+##         30.85000         30.20000         32.73333         35.46667</code></pre>
+<ol start="7" style="list-style-type: decimal">
+<li>Add this as a new column in the data matrix.</li>
+</ol>
+<pre class="r"><code>hot_spring &lt;- cbind(hot_spring, temperature_mean)
+hot_spring</code></pre>
+<pre><code>##                   Jill Steve Susan temperature_mean
+## Bluebell_Spring  36.25 35.40 35.30         35.65000
+## Opal_Spring      35.15 35.35 33.35         34.61667
+## Riverside_Spring 30.70 29.65 29.20         29.85000
+## Too_Hot_Spring   39.70 40.05 38.65         39.46667
+## Mystery_Spring   31.85 31.40 29.30         30.85000
+## Emerald_Spring   30.20 30.65 29.75         30.20000
+## Black_Spring     32.90 32.50 32.80         32.73333
+## Pearl Spring     36.80 36.45 33.15         35.46667</code></pre>
+<ol start="8" style="list-style-type: decimal">
+<li>Show Susan’s value for Opal Spring only.</li>
+</ol>
+<pre class="r"><code>hot_spring[2,3]</code></pre>
+<pre><code>## [1] 33.35</code></pre>
+<ol start="9" style="list-style-type: decimal">
+<li>Calculate the mean for Jill’s column only.</li>
+</ol>
+<pre class="r"><code> jills_column &lt;- hot_spring[,1]
+jills_column</code></pre>
+<pre><code>##  Bluebell_Spring      Opal_Spring Riverside_Spring   Too_Hot_Spring 
+##            36.25            35.15            30.70            39.70 
+##   Mystery_Spring   Emerald_Spring     Black_Spring     Pearl Spring 
+##            31.85            30.20            32.90            36.80</code></pre>
+<pre class="r"><code>mean(jills_column)</code></pre>
+<pre><code>## [1] 34.19375</code></pre>
+<ol start="10" style="list-style-type: decimal">
+<li>Use the data matrix to perform one calculation or operation of your
+interest.</li>
+</ol>
+<pre class="r"><code>steve_column &lt;- hot_spring[,2]
+steve_column</code></pre>
+<pre><code>##  Bluebell_Spring      Opal_Spring Riverside_Spring   Too_Hot_Spring 
+##            35.40            35.35            29.65            40.05 
+##   Mystery_Spring   Emerald_Spring     Black_Spring     Pearl Spring 
+##            31.40            30.65            32.50            36.45</code></pre>
+<pre class="r"><code>median(steve_column)</code></pre>
+<pre><code>## [1] 33.925</code></pre>
 </div>
 <div id="push-your-final-code-to-github" class="section level2">
 <h2>Push your final code to GitHub!</h2>
