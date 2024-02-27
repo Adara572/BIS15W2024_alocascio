@@ -36,6 +36,9 @@ surgery <- read_csv("data/surgery.csv")
 ```{r}
 glimpse(surgery)
 ```
+```{r}
+anyNA(surgery)
+```
 
 ```{r}
 surgery %>% naniar::miss_var_summary()
@@ -54,6 +57,7 @@ surgery %>%
        x=NULL,
        y="# participants")+
   theme_light()
+  
 ```
 
 3. What is the mean age of participants by gender? (hint: please provide a number for each) Since only three participants do not have gender indicated, remove these participants from the data.
@@ -118,7 +122,7 @@ surgery %>%
 ```{r}
 surgery %>% 
   select(ahrq_ccs, ccsmort30rate, ccscomplicationrate) %>% 
-  filter(ahrq_ccs %in% c("Colorectal resection", "Small bowel resection", "Gastrectomy; partial and total", "Endoscopy and endoscopic biopsy of the urinary tract", "Spinal fusion", "Nephrectomy; partial or complete")) %>% 
+  filter(ahrq_ccs %in% c("Colorectal resection", "Small bowel resection", "Gastrectomy; partial and total", "Endoscopy and endoscopic biopsy of the urinary tract", "Spinal fusion", "Nephrectomy; partial or complete")) %>%  # you compare so you do from both 
   group_by(ahrq_ccs) %>% 
   summarise(ccsmort30rate=mean(ccsmort30rate),
             ccscomplicationrate=mean(ccscomplicationrate))
