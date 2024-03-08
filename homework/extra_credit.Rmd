@@ -1,0 +1,223 @@
+---
+title: "Extra Credit W24"
+author: "Adara LoCascio"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your code must be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run. Be sure to add your name to the author header above. 
+
+Your code must knit in order to be considered. If you are stuck and cannot answer a question, then comment out your code and knit the document.  
+
+Don't forget to answer any questions that are asked in the prompt. Some questions will require a plot, but others do not- make sure to read each question carefully.  
+
+For the questions that require a plot, make sure to have clearly labeled axes and a title. Keep your plots clean and professional-looking, but you are free to add color and other aesthetics.  
+
+Be sure to follow the directions and push your code to your repository.
+
+## Background
+In the `data` folder, you will find data about global shark attacks. The data are updated continuously, and are taken from [opendatasoft](https://public.opendatasoft.com/explore/dataset/global-shark-attack/table/?flg=en-us&disjunctive.country&disjunctive.area&disjunctive.activity).  
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+library("naniar")
+```
+
+## Load the data
+Run the following code chunk to import the data.
+```{r message=FALSE, warning=FALSE}
+global_sharks <- read_csv("data/global-shark-attack.csv") %>% clean_names()
+```
+
+## Questions
+1. (2 points) Start by doing some data exploration using your preferred function(s). What is the structure of the data? Where are the missing values and how are they represented?  
+```{r}
+glimpse(global_sharks)
+```
+
+```{r}
+miss_var_summary(global_sharks)
+```
+
+2. (3 points) Are there any "hotspots" for shark incidents? Make a plot that shows the total number of incidents for the top 10 countries? Which country has the highest number of incidents?
+[Are there any "hotspots" for shark incidents? Make a plot that shows the total number of incidents for the top 10 countries? Which country has the highest number of incidents?]
+ 
+
+```{r}
+global_sharks %>%
+  count(country, sort = TRUE) %>%
+  top_n(10) %>%
+  ggplot(aes(x = fct_reorder(country, n), y = n)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Top 10 Countries with the Highest Number of Shark Attacks",
+       x = "Country",
+       y = "Number of Incidents")
+```
+{change the cloumn known as date to reflect the months of the year, and then make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?}
+ 
+```{r}
+global_sharks <- global_sharks %>%
+  mutate(month = month(date, label = TRUE))
+```
+
+
+3. (3 points) Are there months of the year when incidents are more likely to occur? Make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?
+
+```{r}
+global_sharks %>%
+  count(month, sort = TRUE) %>%
+  ggplot(aes(x = month, y = n)) +
+  geom_col() +
+  labs(title = "Number of Shark Attacks by Month",
+       x = "Month",
+       y = "Number of Incidents")
+```
+
+
+
+4. (3 points) Which activity is associated with the highest number of incidents? Make a plot that compares the top 5 riskiest activities. "NA" should not be classified as an activity.
+
+```{r}
+global_sharks %>%
+  filter(!is.na(activity)) %>%
+  count(activity, sort = TRUE) %>%
+  top_n(5) %>%
+  ggplot(aes(x = fct_reorder(activity, n), y = n)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Top 5 Riskiest Activities",
+       x = "Activity",
+       y = "Number of Incidents")
+```
+
+
+5. (3 points) The data include information on who was attacked. Make a plot that shows the total number of fatalities by sex- are males or females more likely to be killed by sharks?
+[make a plot that shows the total number of fatalities by sex]
+
+```{r}
+global_sharks %>% 
+  filter(fatal_y_n == "Y") %>% 
+  filter(sex == "F" | sex == "M") %>% 
+  count(sex) %>% 
+  ggplot(aes(x=sex, y=n, fill=sex)) +
+  geom_col(color="black", alpha=0.5) +
+  labs(title="Fatal Shark Incidents by Sex",
+       x=NULL,
+       y="# of Incidents",
+       fill="Sex") +
+  theme(plot.title=element_text(size=12, face="bold"),
+        axis.title.x=element_text(size=10),
+        axis.title.y=element_text(size=10))
+```
+
+6. (3 points) Make a plot that shows the range of age for the individuals that are attacked. Make sure to restrict sex to M or F (some of the codes used are not clear). You will also need to find a way to manage the messy age column.
+
+
+```{r}
+sharks_age <- global_sharks %>%
+  filter(sex == "F" | sex == "M") %>%
+  filter(!str_detect(age, "[^0-9.]")) %>%
+  mutate(age = as.numeric(str_extract(age, "\\d+\\.?\\d*")))
+```
+
+```{r}
+sharks_age %>% 
+  ggplot(aes(x=sex, y=age, fill=sex)) + 
+  geom_boxplot(alpha=0.5) +
+  labs(title="Age of Shark Attack Victims",
+       x=NULL,
+       y="Age",
+       fill="Sex") +
+  theme(plot.title=element_text(size=10),
+        axis.title.x=element_text(size=8),
+        axis.title.y=element_text(size=8))
+```
+
+
+
+
+7. (3 points) In the United States, what are the top 5 states where shark attacks have been recorded since 1950? Make a plot that compares the number of incidents for these 5 states.
+```{r}
+color <- c("lavenderblush3", "lavenderblush4", "lavenderblush2", "lavenderblush1", "lavenderblush")
+```
+{show me all the colors in r}
+```{r}
+#colors()
+
+```
+
+```{r}
+```
+
+```{r}
+global_sharks %>% 
+  filter(country == "USA") %>% 
+  count(area) %>% 
+  top_n(5, n) %>% 
+  ggplot(aes(x=reorder(area, n), y=n)) +
+  geom_col(color="salmon4", fill="salmon2", alpha=0.5) +
+  labs(title="Number of Shark Incidents by Top 5 States",
+       x="State",
+       y="# of Incidents") +
+  theme(plot.title=element_text(size=12),
+        axis.title.x=element_text(size=10),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        axis.title.y=element_text(size=10))
+```
+
+8. (3 points) Make a new object that limits the data to only include attacks attributed to Great White Sharks. This is trickier than it sounds, you should end up with 494 observations. Look online and adapt code involving `str_detect`. Which country has the highest number of Great White Shark attacks?
+
+
+```{r}
+greatwhite <- global_sharks %>% 
+  filter(str_detect(species, "White"))
+```
+
+```{r}
+greatwhite %>% 
+  count(country) %>% 
+  arrange(desc(n))
+```
+9. (4 points) Use faceting to compare the number of fatal and non-fatal attacks for the top 5 countries with the highest number of Great White Shark attacks.
+
+
+```{r}
+greatwhite %>% 
+  filter(fatal_y_n == "Y" | fatal_y_n == "N") %>% 
+  filter(country == "USA" | country == "AUSTRALIA" | country == "SOUTH AFRICA" | country == "NEW ZEALAND" | country == "ITALY") %>% 
+  ggplot(aes(x=country, fill=country)) +
+  geom_bar(color="black", alpha=0.5) +
+  coord_flip() +
+  facet_grid(fatal_y_n~.) +
+  labs(title="Non-fatal & Fatal GWS Incidents by Top 5 Countries",
+       x=NULL,
+       y="# of Incidents",
+       fill="Country") +
+  theme(plot.title=element_text(size=12, face="bold"),
+        axis.title.x=element_text(size=10),
+        axis.title.y=element_text(size=10))
+```
+10. (3 points) Using the `global_sharks` data, what is one question that you are interested in exploring? Write the question and answer it using a plot or table. 
+ {I am interested in making a graph the shows the species of shark that is responsible for the most fatalites.}
+
+```{r}
+global_sharks %>% 
+  filter(fatal_y_n == "Y") %>% 
+  count(species) %>% 
+  top_n(5, n) %>% 
+  ggplot(aes(x=reorder(species, n), y=n)) +
+  geom_col(color="black", fill="skyblue", alpha=0.5) +
+  labs(title="Top 5 Species Responsible for Fatal Shark Incidents",
+       x="Species",
+       y="# of Incidents") +
+  theme(plot.title=element_text(size=12, face="bold"),
+        axis.title.x=element_text(size=10),
+        axis.title.y=element_text(size=10))
+```
+
